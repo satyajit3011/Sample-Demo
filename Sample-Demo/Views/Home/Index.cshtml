@@ -1,0 +1,52 @@
+﻿@{
+    ViewData[ "Title" ] = "Service Tag";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<div class="">
+    <textarea id="serviceTags" placeholder="Enter service_tag with comma separated." cols="40" rows="5"></textarea>
+    <br />
+    <input type="button" id="Search" value="Search" />
+    <br />
+    <br />
+    <table id="ResultTable" class="table table-bordered table-responsive table-hover" style="width: 350px; display: table-row-group">
+        <tr>
+            <th>Service Tag </th>
+            <th>Sales Order No</th>
+        </tr>
+        @foreach ( var d in Model )
+        {
+            <tr>
+                <td>@d.ServiceTag</td>
+                <td>@d.SalesOrderNumber</td>
+
+            </tr>
+        }
+    </table>
+</div>
+<script type="text/javascript">
+    $(function() {
+        $('#Search').on('click',
+            function () {
+                let serviceTags = $('#serviceTags').val();
+                $.ajax({
+                    type: "GET",
+                    async: true,
+                    cache: false,
+                    url: '/Home/GetServiceTagsData?serviceTags='+serviceTags,
+                    success: (response) => {
+                        let html = "";
+                        for (let i = 0; i < response.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + response[i].serviceTag + "</td>";
+                            html += "<td>" + response[i].salesOrderNumber + "</td>";
+                            html += "</tr>";
+                        }
+                        $('#ResultTable tbody').append(html);
+                    },
+                    error: (error) => {
+                        console.error("Error occurred in getting service tags from backend.", error);
+                    }
+                });
+            });
+    });
+</script>

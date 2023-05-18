@@ -1,0 +1,51 @@
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<div class="">
+    <textarea id="orderNumbers" placeholder="Enter order_number with comma separated." cols="45" rows="5"></textarea>
+    <br />
+    <input type="button" id="Search" value="Search"/>
+    <br />
+    <br />
+    <table id="ResultTable" class="table table-bordered table-responsive table-hover" style="width: 350px; display: table-row-group">
+        <tr>
+            <th>Order Number </th>
+            <th>Status</th>
+            <th>Message</th>
+        </tr>
+        @foreach ( var d in Model )
+        {
+            <tr>
+                <td>@d.OrderNumber</td>
+                <td>@d.Status</td>
+                <td>@d.StatusText</td>
+            </tr>
+        }
+    </table>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#Search').on('click',
+            function () {
+                const orderNumbers = $('#orderNumbers').val();
+                $.ajax({
+                    type: "GET",
+                    async: true,
+                    cache: false,
+                    url: '/Home/GetOrderNumbersData?orderNumbers=' + orderNumbers,
+                    success: (response) => {
+                        let html = "";
+                        for (let i = 0; i < response.length; i++) {
+                            html += "<tr>";
+                            html += "<td>" + response[i].orderNumber + "</td>";
+                            html += "<td>" + response[i].status + "</td>";
+                            html += "<td>" + response[i].statusText + "</td>";
+                            html += "</tr>";
+                        }
+                        $('#ResultTable tbody').append(html);
+                    },
+                    error: (error) => {
+                        console.error("Error occurred in getting order numbers from backend.", error);
+                    }
+                });
+            });
+    });
+</script>
